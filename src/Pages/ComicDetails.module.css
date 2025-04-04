@@ -1,0 +1,86 @@
+.container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.topSection {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.thumbnail {
+    width: 150px;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.links {
+    display: flex;
+    gap: 20px;
+}
+
+.link {
+    color: #ed1d24;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.link:hover {
+    color: #a50e15;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sectionTitle {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.comicsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+}
+
+.comicCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+}
+
+.cardImage {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cardTitle {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0;
+}

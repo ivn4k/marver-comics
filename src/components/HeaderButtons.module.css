@@ -1,0 +1,31 @@
+.buttonsContainer {
+    display: flex;
+    gap: 10px;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    margin-left: auto; /* Отодвигаем кнопки к правому краю */
+    padding-right: 30px; /* Добавляем отступ от правого края */
+}
+
+.button {
+    background-color: transparent;
+    color: #FFF705;
+    padding: 10px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-decoration: none; /* Убираем подчеркивание по умолчанию */
+}
+
+.button:hover {
+    background-color: red;
+    color: white;
+}
+
+.active {
+    text-decoration: underline; /* Подчеркиваем текст для активной кнопки */
+}

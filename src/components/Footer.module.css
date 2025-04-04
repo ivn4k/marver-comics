@@ -1,0 +1,46 @@
+.footer {
+    background-color: #555555;
+    color: white;
+    height: 150px;
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    position: fixed;
+    top: calc(100vh - 150px);
+    left: 0;
+    padding: unset;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; 
+    margin-left: 85px;
+}
+
+.logo {
+    height: 60px;
+    width: 100px;
+    margin-top: 20px;
+}
+
+.content p {
+    margin: 0;
+    padding: 0;
+}
+
+.content a {
+    margin: 0;
+    padding: 0;
+    color: #FFF705;
+    text-decoration: none;
+    transition: color 0.3s;
+    display: inline;
+    line-height: 1;
+    white-space: normal;
+}
+
+.content a:hover {
+    color: red;
+}

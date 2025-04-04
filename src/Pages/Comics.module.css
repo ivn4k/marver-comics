@@ -1,0 +1,63 @@
+.comicsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0 auto;
+    text-align: left;
+    position: fixed;
+    top: 100px;
+    left: 85px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    position: fixed;
+    bottom: 160px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.pageDot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ddd;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    outline-width: 1px;
+    outline-style: solid;
+    outline-color: #7E7D7D;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+.pageDot:hover {
+    background-color: #ed1d24;
+    color: white;
+}
+
+.pageDot.active {
+    background-color: #ed1d24;
+    color: white;
+}
+
+.divideLine {
+    width: 1365px;
+    height: 2px;
+    background-color: #7E7D7D;
+}
