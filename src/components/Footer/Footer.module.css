@@ -1,15 +1,19 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
 .footer {
+    width: 100vw;
     background-color: #555555;
     color: white;
     height: 150px;
-    width: 100%;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    position: fixed;
-    top: calc(100vh - 150px);
-    left: 0;
-    padding: unset;
+    margin: 0;
+    padding: 0;
+    position: relative;
 }
 
 .content {
@@ -17,6 +21,7 @@
     flex-direction: column;
     gap: 5px; 
     margin-left: 85px;
+    box-sizing: border-box;
 }
 
 .logo {

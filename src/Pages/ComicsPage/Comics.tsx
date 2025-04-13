@@ -1,36 +1,20 @@
 import React, { useState } from 'react';
-import ComicCard from '../components/ComicCard';
+import ComicCard from '../../components/ComicCard/ComicCard';
 import styles from './Comics.module.css';
+import { Outlet, useParams } from 'react-router-dom';
+import comics from '../../placeholders/ComicsPlaceholders';
 
-interface ComicCardProps {
-    id: number;
-    title: string;
-    thumbnail: string;
-    isFavorite: boolean;
-    toggleFavorite: () => void;
-}
 
 const Comics: React.FC = () => {
-    const comics = [
-        { id: 1, title: 'Avenges', thumbnail: 'src/assets/standard_incredible.jpg' },
-        { id: 2, title: 'Spider-Man', thumbnail: 'src/assets/portrait_uncanny.jpg' },
-        { id: 3, title: 'Captain America', thumbnail: 'src/assets/portrait_uncanny2.jpg' },
-        { id: 4, title: 'Hulk', thumbnail: 'src/assets/portrait_uncanny3.jpg' },
-        { id: 5, title: 'Avenges', thumbnail: 'src/assets/standard_incredible.jpg' },
-        { id: 6, title: 'Spider-Man', thumbnail: 'src/assets/portrait_uncanny.jpg' },
-        { id: 7, title: 'Captain America', thumbnail: 'src/assets/portrait_uncanny2.jpg' },
-        { id: 8, title: 'Hulk', thumbnail: 'src/assets/portrait_uncanny3.jpg' },
-    ];
+    const { id } = useParams<{ id: string }>();
 
-    
-    const toggleFavorite = () => {}; // Pl
-    
+    if (id) {
+        return <Outlet />;
+    }
 
-    
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 4;
+    const itemsPerPage = 20;
 
-    
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     
@@ -43,7 +27,7 @@ const Comics: React.FC = () => {
     };
 
     return (
-        <div>
+        <div className={styles.pageContainer}>
             <h1 className={styles.title}>Comics ({comics.length})</h1>
             <div className={styles.divideLine}></div>
             <div className={styles.comicsContainer}>
@@ -53,8 +37,6 @@ const Comics: React.FC = () => {
                         id={comic.id}
                         title={comic.title}
                         thumbnail={comic.thumbnail}
-                        isFavorite={false}
-                        toggleFavorite={toggleFavorite}
                     />
                 ))}
             </div>

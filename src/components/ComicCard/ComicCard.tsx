@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './ComicCard.module.css';
-import heartEmpty from '../assets/Vector_heart_1.svg'; // Прозрачное сердечко с обводкой
-import heartFilled from '../assets/Vector_heart.svg'; // Закрашенное сердечко
+import heartEmpty from '../../assets/Vector_heart_1.svg';
+import heartFilled from '../../assets/Vector_heart.svg';
 
 interface ComicCardProps {
     id: number;

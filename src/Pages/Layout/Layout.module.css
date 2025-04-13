@@ -1,0 +1,14 @@
+.layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.main {
+    flex: 1;
+    margin-top: 80px;
+    width: 100%;
+}

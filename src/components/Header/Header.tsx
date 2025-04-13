@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Header.module.css';
-import logo from '../assets/Marvel_Logo.svg';
-import HeaderButtons from './HeaderButtons';
+import logo from '../../assets/Marvel_Logo.svg';
+import HeaderButtons from '../HeaderButtons/HeaderButtons';
 
 const Header: React.FC = () => {
     return (
