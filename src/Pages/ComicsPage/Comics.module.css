@@ -72,3 +72,11 @@
     color: white;
 }
 
+.dots {
+    display: flex;
+    align-items: center;
+    color: #7E7D7D;
+    font-weight: bold;
+    padding: 0 5px;
+}
+

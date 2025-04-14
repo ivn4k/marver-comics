@@ -61,9 +61,10 @@
 }
 
 .sectionTitle {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: bold;
-    margin: 0;
+    color: #333;
+    margin-bottom: 20px;
 }
 
 .variant {
@@ -104,4 +105,28 @@
     font-size: 14px;
     font-weight: bold;
     margin: 0;
+}
+
+.description {
+    margin: 20px 0;
+    line-height: 1.6;
+    color: #333;
+}
+
+.metadata {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+}
+
+.metadata p {
+    margin: 8px 0;
+    color: #666;
+}
+
+.series {
+    font-size: 16px;
+    color: #666;
+    margin: 10px 0;
 }

@@ -5,9 +5,10 @@ import ComicDetails from "./Pages/ComicDetails/ComicDetails";
 import Layout from "./Pages/Layout/Layout";
 import Favorite from "./Pages/FavoritePage/Favorite";
 import TestPage from "./Pages/TestPage/TestPage";
+import StoreProvider from "./store/StoreProvider";
 
 function App() {
-  let element = useRoutes([
+  const element = useRoutes([
     {
       path: "/",
       element: <Layout />,
@@ -38,7 +39,11 @@ function App() {
     },
   ]);
 
-  return element;
+  return (
+    <StoreProvider>
+      {element}
+    </StoreProvider>
+  );
 }
 
 export default App;
