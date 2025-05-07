@@ -4,11 +4,12 @@ import { useContext } from 'react';
 import { StoreContext } from '../../store/StoreProvider';
 import ComicCard from '../../components/ComicCard/ComicCard';
 import styles from './Comics.module.css';
-import { Outlet, useParams, useSearchParams, useNavigate } from 'react-router-dom';
+import { Outlet, useSearchParams, useNavigate } from 'react-router-dom';
+import { useFavoriteToggle } from '../../hooks/useFavoriteToogle';
 
 const Comics: React.FC = observer(() => {
     const { comicsStore, favoritesStore } = useContext(StoreContext);
-    const { id } = useParams<{ id: string }>();
+    const { toggleFavorite } = useFavoriteToggle();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
@@ -19,10 +20,6 @@ const Comics: React.FC = observer(() => {
         const offset = (currentPage - 1) * itemsPerPage;
         comicsStore.fetchComics(offset, itemsPerPage);
     }, [currentPage, comicsStore, itemsPerPage]);
-
-    if (id) {
-        return <Outlet />;
-    }
 
     if (comicsStore.loading) {
         return <div>Loading...</div>;
@@ -96,19 +93,15 @@ const Comics: React.FC = observer(() => {
                         title={comic.title}
                         thumbnail={`${comic.thumbnail.path}.${comic.thumbnail.extension}`}
                         isFavorite={favoritesStore.isFavorite(comic.id)}
-                        onFavoriteClick={() => {
-                            if (favoritesStore.isFavorite(comic.id)) {
-                                favoritesStore.removeFromFavorites(comic.id);
-                            } else {
-                                favoritesStore.addToFavorites(comic);
-                            }
-                        }}
+                        onFavoriteClick={() => toggleFavorite(comic)}
+
                     />
                 ))}
             </div>
             <div className={styles.pagination}>
                 {renderPaginationItems()}
             </div>
+            <Outlet />
         </div>
     );
 });

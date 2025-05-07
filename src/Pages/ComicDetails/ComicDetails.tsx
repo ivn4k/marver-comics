@@ -5,10 +5,11 @@ import { useContext } from 'react';
 import { StoreContext } from '../../store/StoreProvider';
 import styles from './ComicDetails.module.css';
 import ComicCard from '../../components/ComicCard/ComicCard';
-import Toast from '../../components/Toast/Toast';
+import { useFavoriteToggle } from '../../hooks/useFavoriteToogle';
 
 const ComicDetails: React.FC = observer(() => {
     const { comicsStore, favoritesStore } = useContext(StoreContext);
+    const { toggleFavorite } = useFavoriteToggle();
     const { id } = useParams<{ id: string }>();
     const currentId = parseInt(id || '0');
 
@@ -30,13 +31,6 @@ const ComicDetails: React.FC = observer(() => {
 
     return (
         <div className={styles.container}>
-            {comicsStore.showError && comicsStore.error && (
-                <Toast
-                    message={comicsStore.error}
-                    type="error"
-                    onClose={() => comicsStore.clearError()}
-                />
-            )}
             <div className={styles.topSection}>
                 <img
                     src={`${currentComic.thumbnail.path}.${currentComic.thumbnail.extension}`}
@@ -85,13 +79,7 @@ const ComicDetails: React.FC = observer(() => {
                                 title={variant.title}
                                 thumbnail={`${variant.thumbnail.path}.${variant.thumbnail.extension}`}
                                 isFavorite={favoritesStore.isFavorite(variant.id)}
-                                onFavoriteClick={() => {
-                                    if (favoritesStore.isFavorite(variant.id)) {
-                                        favoritesStore.removeFromFavorites(variant.id);
-                                    } else {
-                                        favoritesStore.addToFavorites(variant);
-                                    }
-                                }}
+                                onFavoriteClick={() => toggleFavorite(variant)}
                             />
                         ))}
                     </div>
@@ -112,13 +100,7 @@ const ComicDetails: React.FC = observer(() => {
                                 title={comic.title}
                                 thumbnail={`${comic.thumbnail.path}.${comic.thumbnail.extension}`}
                                 isFavorite={favoritesStore.isFavorite(comic.id)}
-                                onFavoriteClick={() => {
-                                    if (favoritesStore.isFavorite(comic.id)) {
-                                        favoritesStore.removeFromFavorites(comic.id);
-                                    } else {
-                                        favoritesStore.addToFavorites(comic);
-                                    }
-                                }}
+                                onFavoriteClick={() => toggleFavorite(comic)}
                             />
                         ))}
                     </div>

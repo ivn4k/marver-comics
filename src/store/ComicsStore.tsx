@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import api from '../api/axiosConfig';
 import axios from 'axios';
 import { IMarvelComic, IMarvelResponse } from '../types/Comics';
+import { toast } from 'react-toastify';
 
 class ComicsStore {
     comics: IMarvelComic[] = [];
@@ -49,6 +50,10 @@ class ComicsStore {
                 this.limit = response.data.data.limit;
                 this.loading = false;
             });
+
+            if (response.data.data.results.length === 0) {
+                toast.info('No comics found');
+            }
         } catch (error) {
             this.handleError(error);
         }
@@ -64,6 +69,11 @@ class ComicsStore {
             const response = await api.get<IMarvelResponse>(`/comics/${id}`, {
                 params: this.getAuthParams()
             });
+
+            if (!response.data.data.results.length) {
+                toast.error('Comic not found');
+                return;
+            }
 
             runInAction(() => {
                 this.currentComic = response.data.data.results[0];
@@ -171,10 +181,39 @@ class ComicsStore {
     }
 
     private handleError(error: unknown) {
+        console.log('handleError called from:', new Error().stack);  // Добавить для отладки
         runInAction(() => {
             if (axios.isAxiosError(error)) {
-                this.error = error.response?.data?.message || error.message;
+                const status = error.response?.status;
+                const message = error.response?.data?.message || error.message;
+                
+                switch (status) {
+                    case 401:
+                        toast.error('Authentication failed. Please check API keys.');
+                        this.error = 'Authentication failed';
+                        break;
+                    case 403:
+                        toast.error('Access forbidden. Please check API permissions.');
+                        this.error = 'Access forbidden';
+                        break;
+                    case 404:
+                        toast.error('Comic not found');
+                        this.error = 'Comic not found';
+                        break;
+                    case 429:
+                        toast.error('Too many requests. Please try again later.');
+                        this.error = 'Rate limit exceeded';
+                        break;
+                    case undefined:
+                        toast.error('Network error. Please check your connection.');
+                        this.error = 'Network error';
+                        break;
+                    default:
+                        toast.error(`Error: ${message}`);
+                        this.error = message;
+                }
             } else {
+                toast.error('An unexpected error occurred');
                 this.error = 'An unexpected error occurred';
             }
             this.loading = false;

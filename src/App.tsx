@@ -6,6 +6,8 @@ import Layout from "./Pages/Layout/Layout";
 import Favorite from "./Pages/FavoritePage/Favorite";
 import TestPage from "./Pages/TestPage/TestPage";
 import StoreProvider from "./store/StoreProvider";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const element = useRoutes([
@@ -42,6 +44,7 @@ function App() {
   return (
     <StoreProvider>
       {element}
+      <ToastContainer position="top-right" autoClose={3000} />
     </StoreProvider>
   );
 }

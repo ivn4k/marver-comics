@@ -1,4 +1,5 @@
 import { makeAutoObservable, reaction } from 'mobx';
+
 import { IMarvelComic } from '../types/Comics';
 
 class FavoritesStore {
