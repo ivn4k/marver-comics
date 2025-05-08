@@ -1,0 +1,34 @@
+.pageContainer {
+    max-width: 100%;
+    margin: 0;
+    padding: 20px 0;
+}
+
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0 auto;
+    text-align: left;
+    position: absolute;
+    top: 100px;
+    left: 85px;
+    
+}
+
+.divideLine {
+    width: 100vw;
+    height: 2px;
+    background-color: #7E7D7D;
+    position: absolute;
+    margin-top: 20px;
+}
+.comicsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 1500px;
+}

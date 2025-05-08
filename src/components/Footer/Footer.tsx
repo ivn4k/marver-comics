@@ -1,5 +1,5 @@
 import styles from './Footer.module.css';
-import logo from '../assets/Marvel_Footer.svg';
+import logo from '../../assets/Marvel_Footer.svg';
 
 const Footer: React.FC = () => {
     const currentYear = new Date().getFullYear();

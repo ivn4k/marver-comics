@@ -3,8 +3,8 @@
     gap: 10px;
     flex-wrap: nowrap;
     overflow: hidden;
-    margin-left: auto; /* Отодвигаем кнопки к правому краю */
-    padding-right: 30px; /* Добавляем отступ от правого края */
+    margin-left: auto;
+    padding-right: 30px;
 }
 
 .button {
@@ -18,7 +18,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    text-decoration: none; /* Убираем подчеркивание по умолчанию */
+    text-decoration: none;
 }
 
 .button:hover {
@@ -27,5 +27,5 @@
 }
 
 .active {
-    text-decoration: underline; /* Подчеркиваем текст для активной кнопки */
+    text-decoration: underline;
 }

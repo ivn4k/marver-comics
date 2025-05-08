@@ -1,9 +1,7 @@
-.comicsContainer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    padding: 20px;
+.pageContainer {
+    max-width: 100%;
+    margin: 0;
+    padding: 20px 0;
 }
 
 .title {
@@ -11,9 +9,27 @@
     font-weight: bold;
     margin: 0 auto;
     text-align: left;
-    position: fixed;
+    position: absolute;
     top: 100px;
     left: 85px;
+}
+
+.divideLine {
+    width: 100vw;
+    height: 2px;
+    background-color: #7E7D7D;
+    position: absolute;
+    margin-top: 20px;
+}
+
+.comicsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 1500px;
 }
 
 .pagination {
@@ -22,7 +38,7 @@
     align-items: center;
     gap: 10px;
     margin-top: 20px;
-    position: fixed;
+    position: absolute;
     bottom: 160px;
     left: 50%;
     transform: translateX(-50%);
@@ -56,8 +72,11 @@
     color: white;
 }
 
-.divideLine {
-    width: 1365px;
-    height: 2px;
-    background-color: #7E7D7D;
+.dots {
+    display: flex;
+    align-items: center;
+    color: #7E7D7D;
+    font-weight: bold;
+    padding: 0 5px;
 }
+
