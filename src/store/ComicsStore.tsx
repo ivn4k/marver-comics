@@ -3,6 +3,7 @@ import api from '../api/axiosConfig';
 import axios from 'axios';
 import { IMarvelComic, IMarvelResponse } from '../types/Comics';
 import { toast } from 'react-toastify';
+import { generateMarvelHash, generateTimestamp } from '../utils/apiUtils';
 
 class ComicsStore {
     comics: IMarvelComic[] = [];
@@ -21,11 +22,18 @@ class ComicsStore {
         makeAutoObservable(this);
     }
 
-    private getAuthParams() {
+    private async getAuthParams() {
+        const timestamp = generateTimestamp();
+        const hash = await generateMarvelHash(
+            timestamp,
+            import.meta.env.VITE_MARVEL_API_PUBLIC_KEY,
+            import.meta.env.VITE_MARVEL_API_PRIVATE_KEY
+        );
+
         return {
             apikey: import.meta.env.VITE_MARVEL_API_PUBLIC_KEY,
-            ts: import.meta.env.VITE_MARVEL_API_TS,
-            hash: import.meta.env.VITE_MARVEL_API_HASH
+            ts: timestamp,
+            hash: hash
         };
     }
 
@@ -34,9 +42,10 @@ class ComicsStore {
         this.error = null;
 
         try {
+            const params = await this.getAuthParams();
             const response = await api.get<IMarvelResponse>('/comics', {
                 params: {
-                    ...this.getAuthParams(),
+                    ...params,
                     offset,
                     limit,
                     orderBy: '-focDate'
@@ -66,8 +75,9 @@ class ComicsStore {
         this.seriesComics = [];
 
         try {
+            const params = await this.getAuthParams();
             const response = await api.get<IMarvelResponse>(`/comics/${id}`, {
-                params: this.getAuthParams()
+                params
             });
 
             if (!response.data.data.results.length) {
@@ -102,9 +112,10 @@ class ComicsStore {
 
     private async fetchVariants(variantIds: string[]) {
         try {
+            const params = await this.getAuthParams();
             const variantRequests = variantIds.map(id => 
                 api.get<IMarvelResponse>(`/comics/${id}`, {
-                    params: this.getAuthParams()
+                    params
                 })
             );
 
@@ -121,9 +132,10 @@ class ComicsStore {
     async fetchSeriesComics(seriesUri: string) {
         try {
             const seriesId = seriesUri.split('/').pop();
+            const params = await this.getAuthParams();
             const response = await api.get<IMarvelResponse>(`/series/${seriesId}/comics`, {
                 params: {
-                    ...this.getAuthParams(),
+                    ...params,
                     orderBy: 'issueNumber'
                 }
             });
@@ -142,9 +154,10 @@ class ComicsStore {
 
     async fetchRelatedComics(issueNumber: number) {
         try {
+            const params = await this.getAuthParams();
             const response = await api.get<IMarvelResponse>('/comics', {
                 params: {
-                    ...this.getAuthParams(),
+                    ...params,
                     issueNumber,
                     limit: 4
                 }
@@ -181,11 +194,18 @@ class ComicsStore {
     }
 
     private handleError(error: unknown) {
-        console.log('handleError called from:', new Error().stack);  // Добавить для отладки
+        console.group('Error Details');
+        console.log('Error object:', error);
+        console.log('Stack trace:', new Error().stack);
+
         runInAction(() => {
             if (axios.isAxiosError(error)) {
                 const status = error.response?.status;
                 const message = error.response?.data?.message || error.message;
+                
+                console.log('Axios Error Status:', status);
+                console.log('Axios Error Message:', message);
+                console.log('Axios Error Response:', error.response?.data);
                 
                 switch (status) {
                     case 401:
@@ -213,12 +233,21 @@ class ComicsStore {
                         this.error = message;
                 }
             } else {
-                toast.error('An unexpected error occurred');
-                this.error = 'An unexpected error occurred';
+                const errorMessage = error instanceof Error 
+                    ? error.message 
+                    : 'An unexpected error occurred';
+                
+                console.log('Non-Axios Error:', error);
+                console.log('Error Message:', errorMessage);
+                
+                toast.error(errorMessage);
+                this.error = errorMessage;
             }
             this.loading = false;
             this.showError = true;
         });
+        
+        console.groupEnd();
     }
 
     clearError() {
