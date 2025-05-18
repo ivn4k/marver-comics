@@ -17,6 +17,9 @@ class ComicsStore {
     offset: number = 0;
     limit: number = 20;
     showError: boolean = false;
+    private requestCache: Map<string, Promise<any>> = new Map();
+    // Add a new cache for series comics data
+    private seriesComicsCache: Map<string, IMarvelComic[]> = new Map();
 
     constructor() {
         makeAutoObservable(this);
@@ -35,6 +38,24 @@ class ComicsStore {
             ts: timestamp,
             hash: hash
         };
+    }
+
+    private async cachedRequest<T>(key: string, requestFn: () => Promise<T>): Promise<T> {
+        // If there's already a pending request for this key, return that promise
+        if (this.requestCache.has(key)) {
+            return this.requestCache.get(key)!;
+        }
+        
+        // Create a new promise for this request
+        const requestPromise = requestFn().finally(() => {
+            // Clean up the cache when the request is done (success or error)
+            this.requestCache.delete(key);
+        });
+        
+        // Store the promise in the cache
+        this.requestCache.set(key, requestPromise);
+        
+        return requestPromise;
     }
 
     async fetchComics(offset: number = 0, limit: number = 20) {
@@ -69,6 +90,11 @@ class ComicsStore {
     }
 
     async fetchComicById(id: number) {
+        if (this.currentComic?.id === id) {
+            // If already loaded the same comic, don't reload
+            return;
+        }
+        
         this.loading = true;
         this.error = null;
         this.variants = [];
@@ -76,9 +102,10 @@ class ComicsStore {
 
         try {
             const params = await this.getAuthParams();
-            const response = await api.get<IMarvelResponse>(`/comics/${id}`, {
-                params
-            });
+            const response = await this.cachedRequest(
+                `comic-${id}`,
+                () => api.get<IMarvelResponse>(`/comics/${id}`, { params })
+            );
 
             if (!response.data.data.results.length) {
                 toast.error('Comic not found');
@@ -89,17 +116,12 @@ class ComicsStore {
                 this.currentComic = response.data.data.results[0];
             });
 
-            // Получаем варианты комикса
-            if (this.currentComic?.variants && this.currentComic.variants.length > 0) {
-                const variantIds = this.currentComic.variants.map(v => 
-                    v.resourceURI.split('/').pop()
-                ).filter((id): id is string => id !== undefined);
-                await this.fetchVariants(variantIds);
-            }
-
-            // Получаем комиксы серии
-            if (this.currentComic?.series?.resourceURI) {
-                await this.fetchSeriesComics(this.currentComic.series.resourceURI);
+            // Use Promise.all to fetch variants and series comics concurrently
+            if (this.currentComic) {
+                await Promise.all([
+                    this.fetchVariantsIfNeeded(),
+                    this.fetchSeriesComicsIfNeeded()
+                ]);
             }
 
             runInAction(() => {
@@ -110,13 +132,48 @@ class ComicsStore {
         }
     }
 
+    private async fetchVariantsIfNeeded() {
+        if (!this.currentComic?.variants?.length) return;
+
+        const variantIds = this.currentComic.variants
+            .map(v => v.resourceURI.split('/').pop())
+            .filter((id): id is string => id !== undefined);
+
+        await this.fetchVariants(variantIds);
+    }
+
+    private async fetchSeriesComicsIfNeeded() {
+        if (!this.currentComic?.series?.resourceURI) return;
+        
+        const seriesUri = this.currentComic.series.resourceURI;
+        const seriesId = seriesUri.split('/').pop();
+        
+        if (!seriesId) return;
+        
+        // Check if we already have cached series comics
+        if (this.seriesComicsCache.has(seriesId)) {
+            runInAction(() => {
+                // Use cached data
+                const cachedComics = this.seriesComicsCache.get(seriesId)!;
+                this.seriesComics = cachedComics.filter(comic => 
+                    comic.id !== this.currentComic?.id &&
+                    !this.variants.some(v => v.id === comic.id)
+                );
+            });
+            return;
+        }
+        
+        await this.fetchSeriesComics(seriesUri);
+    }
+
     private async fetchVariants(variantIds: string[]) {
         try {
             const params = await this.getAuthParams();
             const variantRequests = variantIds.map(id => 
-                api.get<IMarvelResponse>(`/comics/${id}`, {
-                    params
-                })
+                this.cachedRequest(
+                    `variant-${id}`,
+                    () => api.get<IMarvelResponse>(`/comics/${id}`, { params })
+                )
             );
 
             const responses = await Promise.all(variantRequests);
@@ -132,13 +189,24 @@ class ComicsStore {
     async fetchSeriesComics(seriesUri: string) {
         try {
             const seriesId = seriesUri.split('/').pop();
+            if (!seriesId) return;
+            
+            // Check if this series is already being fetched
+            const cacheKey = `series-${seriesId}`;
+            
             const params = await this.getAuthParams();
-            const response = await api.get<IMarvelResponse>(`/series/${seriesId}/comics`, {
-                params: {
-                    ...params,
-                    orderBy: 'issueNumber'
-                }
-            });
+            const response = await this.cachedRequest(
+                cacheKey,
+                () => api.get<IMarvelResponse>(`/series/${seriesId}/comics`, {
+                    params: {
+                        ...params,
+                        orderBy: 'issueNumber'
+                    }
+                })
+            );
+            
+            // Store all comics for this series in the cache
+            this.seriesComicsCache.set(seriesId, response.data.data.results);
 
             runInAction(() => {
                 // Фильтруем, исключая текущий комикс и его варианты

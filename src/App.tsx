@@ -21,8 +21,11 @@ function App() {
         },
         {
           path: "comics",
-          element: <Comics />,
           children: [
+            {
+              path: "",
+              element: <Comics />
+            },
             { 
               path: ":id", 
               element: <ComicDetails />,

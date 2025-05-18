@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import { StoreContext } from '../../store/StoreProvider';
 import ComicCard from '../../components/ComicCard/ComicCard';
 import styles from './Comics.module.css';
-import { Outlet, useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useFavoriteToggle } from '../../hooks/useFavoriteToogle';
 
 const Comics: React.FC = observer(() => {
@@ -94,14 +94,12 @@ const Comics: React.FC = observer(() => {
                         thumbnail={`${comic.thumbnail.path}.${comic.thumbnail.extension}`}
                         isFavorite={favoritesStore.isFavorite(comic.id)}
                         onFavoriteClick={() => toggleFavorite(comic)}
-
                     />
                 ))}
             </div>
             <div className={styles.pagination}>
                 {renderPaginationItems()}
             </div>
-            <Outlet />
         </div>
     );
 });
