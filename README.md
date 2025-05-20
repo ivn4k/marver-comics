@@ -1,54 +1,103 @@
-# React + TypeScript + Vite
+# Marvel Comics App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## О приложении
 
-Currently, two official plugins are available:
+Marvel Comics App - это веб-приложение для просмотра комиксов Marvel, разработанное с использованием стека технологий React + TypeScript. Приложение предоставляет удобный интерфейс для просмотра, поиска и сохранения любимых комиксов Marvel.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Основные технологии
 
-## Expanding the ESLint configuration
+- React 19.0
+- TypeScript
+- Vite
+- MobX (для управления состоянием)
+- React Router DOM (для маршрутизации)
+- Axios (для HTTP-запросов)
+- React Virtuoso (для оптимизированной прокрутки)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Запуск приложения
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Предварительные требования
+
+1. Node.js (последняя стабильная версия)
+2. npm или yarn
+3. Учетная запись разработчика Marvel API (для получения ключей API)
+
+### Настройка окружения
+
+1. Клонируйте репозиторий
+2. Создайте файл `.env` в корневой директории проекта со следующими переменными:
+```env
+VITE_MARVEL_API_PUBLIC_KEY=ваш_публичный_ключ
+VITE_MARVEL_API_PRIVATE_KEY=ваш_приватный_ключ
+VITE_MARVEL_API_BASE_URL=https://gateway.marvel.com/v1/public
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Установка и запуск
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+1. Установите зависимости:
+```bash
+npm install
 ```
+
+2. Запустите приложение в режиме разработки:
+```bash
+npm run dev
+```
+
+3. Для сборки проекта:
+```bash
+npm run build
+```
+
+## Поддерживаемые возможности
+
+### 1. Просмотр комиксов
+- Бесконечная прокрутка списка комиксов
+- Оптимизированная загрузка изображений
+- Адаптивный дизайн для различных устройств
+
+### 2. Поиск
+- Поиск комиксов по названию
+- Автоматическое обновление результатов
+- Дебаунсинг поисковых запросов
+
+### 3. Детальная информация
+- Подробное описание каждого комикса
+- Просмотр вариантов обложек
+- Навигация по серии комиксов
+- Связанные комиксы
+
+### 4. Избранное
+- Добавление комиксов в избранное
+- Локальное хранение списка избранного
+- Быстрый доступ к сохраненным комиксам
+
+### 5. Интерфейс
+- Темная и светлая темы
+- Адаптивный дизайн
+- Анимации и переходы
+- Информативные уведомления
+
+### 6. Производительность
+- Виртуализация списков
+- Кеширование запросов
+- Оптимизированная загрузка изображений
+- Ленивая загрузка компонентов
+
+## Скриншоты
+
+### Главная страница
+![alt text](README_assets/image.png)
+
+### Детальная страница комикса
+![alt text](README_assets/image2.png)
+![alt text](README_assets/image3.png)
+
+### Страница избранного
+![alt text](README_assets/image4.png)
+
+## Дополнительная информация
+
+Приложение использует официальное API Marvel Comics. Для работы с приложением необходимо получить API ключи на сайте [developer.marvel.com](https://developer.marvel.com/).
+
+© 2025 MARVEL. Все права защищены.

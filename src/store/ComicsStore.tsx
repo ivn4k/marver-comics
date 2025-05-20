@@ -3,6 +3,7 @@ import api from '../api/axiosConfig';
 import axios from 'axios';
 import { IMarvelComic, IMarvelResponse } from '../types/Comics';
 import { toast } from 'react-toastify';
+import { generateMarvelHash, generateTimestamp } from '../utils/apiUtils';
 
 class ComicsStore {
     comics: IMarvelComic[] = [];
@@ -16,32 +17,79 @@ class ComicsStore {
     offset: number = 0;
     limit: number = 20;
     showError: boolean = false;
+    private requestCache: Map<string, Promise<any>> = new Map();
+    // Add a new cache for series comics data
+    private seriesComicsCache: Map<string, IMarvelComic[]> = new Map();
+    // Add a flag to avoid duplicate requests when loading more data
+    private isLoadingMore: boolean = false;
 
     constructor() {
         makeAutoObservable(this);
     }
 
-    private getAuthParams() {
+    private async getAuthParams() {
+        const timestamp = generateTimestamp();
+        const hash = await generateMarvelHash(
+            timestamp,
+            import.meta.env.VITE_MARVEL_API_PUBLIC_KEY,
+            import.meta.env.VITE_MARVEL_API_PRIVATE_KEY
+        );
+
         return {
             apikey: import.meta.env.VITE_MARVEL_API_PUBLIC_KEY,
-            ts: import.meta.env.VITE_MARVEL_API_TS,
-            hash: import.meta.env.VITE_MARVEL_API_HASH
+            ts: timestamp,
+            hash: hash
         };
     }
 
-    async fetchComics(offset: number = 0, limit: number = 20) {
+    private async cachedRequest<T>(key: string, requestFn: () => Promise<T>): Promise<T> {
+        // If there's already a pending request for this key, return that promise
+        if (this.requestCache.has(key)) {
+            return this.requestCache.get(key)!;
+        }
+        
+        // Create a new promise for this request
+        const requestPromise = requestFn().finally(() => {
+            // Clean up the cache when the request is done (success or error)
+            this.requestCache.delete(key);
+        });
+        
+        // Store the promise in the cache
+        this.requestCache.set(key, requestPromise);
+        
+        return requestPromise;
+    }
+
+    async fetchComics(offset: number = 0, limit: number = 20, searchQuery?: string) {
+        // Return if already loading to prevent duplicate fetches
+        if (this.isLoadingMore) return;
+        
+        // Generate a cache key unique to this pagination request
+        const cacheKey = `comics-${offset}-${limit}-${searchQuery || ''}`;
+        
+        // If this exact offset/limit is already in the cache, return the cached result
+        if (this.requestCache.has(cacheKey)) {
+            return this.requestCache.get(cacheKey);
+        }
+        
         this.loading = true;
         this.error = null;
+        this.isLoadingMore = true;
 
         try {
-            const response = await api.get<IMarvelResponse>('/comics', {
-                params: {
-                    ...this.getAuthParams(),
-                    offset,
-                    limit,
-                    orderBy: '-focDate'
-                }
-            });
+            const params = await this.getAuthParams();
+            const response = await this.cachedRequest(
+                cacheKey,
+                () => api.get<IMarvelResponse>('/comics', {
+                    params: {
+                        ...params,
+                        offset,
+                        limit,
+                        orderBy: '-focDate',
+                        ...(searchQuery && { titleStartsWith: searchQuery })
+                    }
+                })
+            );
 
             runInAction(() => {
                 this.comics = response.data.data.results;
@@ -49,26 +97,41 @@ class ComicsStore {
                 this.offset = response.data.data.offset;
                 this.limit = response.data.data.limit;
                 this.loading = false;
+                this.isLoadingMore = false;
             });
 
-            if (response.data.data.results.length === 0) {
-                toast.info('No comics found');
+            if (response.data.data.results.length === 0 && offset === 0) {
+                toast.info(searchQuery ? 'No comics found matching your search' : 'No comics found');
             }
+            
+            return response;
         } catch (error) {
             this.handleError(error);
+            runInAction(() => {
+                this.isLoadingMore = false;
+            });
+            return null;
         }
     }
 
+    // Остальные методы остаются без изменений...
     async fetchComicById(id: number) {
+        if (this.currentComic?.id === id) {
+            // If already loaded the same comic, don't reload
+            return;
+        }
+        
         this.loading = true;
         this.error = null;
         this.variants = [];
         this.seriesComics = [];
 
         try {
-            const response = await api.get<IMarvelResponse>(`/comics/${id}`, {
-                params: this.getAuthParams()
-            });
+            const params = await this.getAuthParams();
+            const response = await this.cachedRequest(
+                `comic-${id}`,
+                () => api.get<IMarvelResponse>(`/comics/${id}`, { params })
+            );
 
             if (!response.data.data.results.length) {
                 toast.error('Comic not found');
@@ -79,17 +142,12 @@ class ComicsStore {
                 this.currentComic = response.data.data.results[0];
             });
 
-            // Получаем варианты комикса
-            if (this.currentComic?.variants && this.currentComic.variants.length > 0) {
-                const variantIds = this.currentComic.variants.map(v => 
-                    v.resourceURI.split('/').pop()
-                ).filter((id): id is string => id !== undefined);
-                await this.fetchVariants(variantIds);
-            }
-
-            // Получаем комиксы серии
-            if (this.currentComic?.series?.resourceURI) {
-                await this.fetchSeriesComics(this.currentComic.series.resourceURI);
+            // Use Promise.all to fetch variants and series comics concurrently
+            if (this.currentComic) {
+                await Promise.all([
+                    this.fetchVariantsIfNeeded(),
+                    this.fetchSeriesComicsIfNeeded()
+                ]);
             }
 
             runInAction(() => {
@@ -100,12 +158,48 @@ class ComicsStore {
         }
     }
 
+    private async fetchVariantsIfNeeded() {
+        if (!this.currentComic?.variants?.length) return;
+
+        const variantIds = this.currentComic.variants
+            .map(v => v.resourceURI.split('/').pop())
+            .filter((id): id is string => id !== undefined);
+
+        await this.fetchVariants(variantIds);
+    }
+
+    private async fetchSeriesComicsIfNeeded() {
+        if (!this.currentComic?.series?.resourceURI) return;
+        
+        const seriesUri = this.currentComic.series.resourceURI;
+        const seriesId = seriesUri.split('/').pop();
+        
+        if (!seriesId) return;
+        
+        // Check if we already have cached series comics
+        if (this.seriesComicsCache.has(seriesId)) {
+            runInAction(() => {
+                // Use cached data
+                const cachedComics = this.seriesComicsCache.get(seriesId)!;
+                this.seriesComics = cachedComics.filter(comic => 
+                    comic.id !== this.currentComic?.id &&
+                    !this.variants.some(v => v.id === comic.id)
+                );
+            });
+            return;
+        }
+        
+        await this.fetchSeriesComics(seriesUri);
+    }
+
     private async fetchVariants(variantIds: string[]) {
         try {
+            const params = await this.getAuthParams();
             const variantRequests = variantIds.map(id => 
-                api.get<IMarvelResponse>(`/comics/${id}`, {
-                    params: this.getAuthParams()
-                })
+                this.cachedRequest(
+                    `variant-${id}`,
+                    () => api.get<IMarvelResponse>(`/comics/${id}`, { params })
+                )
             );
 
             const responses = await Promise.all(variantRequests);
@@ -121,12 +215,24 @@ class ComicsStore {
     async fetchSeriesComics(seriesUri: string) {
         try {
             const seriesId = seriesUri.split('/').pop();
-            const response = await api.get<IMarvelResponse>(`/series/${seriesId}/comics`, {
-                params: {
-                    ...this.getAuthParams(),
-                    orderBy: 'issueNumber'
-                }
-            });
+            if (!seriesId) return;
+            
+            // Check if this series is already being fetched
+            const cacheKey = `series-${seriesId}`;
+            
+            const params = await this.getAuthParams();
+            const response = await this.cachedRequest(
+                cacheKey,
+                () => api.get<IMarvelResponse>(`/series/${seriesId}/comics`, {
+                    params: {
+                        ...params,
+                        orderBy: 'issueNumber'
+                    }
+                })
+            );
+            
+            // Store all comics for this series in the cache
+            this.seriesComicsCache.set(seriesId, response.data.data.results);
 
             runInAction(() => {
                 // Фильтруем, исключая текущий комикс и его варианты
@@ -142,9 +248,10 @@ class ComicsStore {
 
     async fetchRelatedComics(issueNumber: number) {
         try {
+            const params = await this.getAuthParams();
             const response = await api.get<IMarvelResponse>('/comics', {
                 params: {
-                    ...this.getAuthParams(),
+                    ...params,
                     issueNumber,
                     limit: 4
                 }
@@ -181,11 +288,18 @@ class ComicsStore {
     }
 
     private handleError(error: unknown) {
-        console.log('handleError called from:', new Error().stack);  // Добавить для отладки
+        console.group('Error Details');
+        console.log('Error object:', error);
+        console.log('Stack trace:', new Error().stack);
+
         runInAction(() => {
             if (axios.isAxiosError(error)) {
                 const status = error.response?.status;
                 const message = error.response?.data?.message || error.message;
+                
+                console.log('Axios Error Status:', status);
+                console.log('Axios Error Message:', message);
+                console.log('Axios Error Response:', error.response?.data);
                 
                 switch (status) {
                     case 401:
@@ -213,12 +327,21 @@ class ComicsStore {
                         this.error = message;
                 }
             } else {
-                toast.error('An unexpected error occurred');
-                this.error = 'An unexpected error occurred';
+                const errorMessage = error instanceof Error 
+                    ? error.message 
+                    : 'An unexpected error occurred';
+                
+                console.log('Non-Axios Error:', error);
+                console.log('Error Message:', errorMessage);
+                
+                toast.error(errorMessage);
+                this.error = errorMessage;
             }
             this.loading = false;
             this.showError = true;
         });
+        
+        console.groupEnd();
     }
 
     clearError() {
@@ -226,5 +349,4 @@ class ComicsStore {
         this.showError = false;
     }
 }
-
 export const comicsStore = new ComicsStore();

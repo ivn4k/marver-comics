@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import styles from './HeaderButtons.module.css';
+import ThemeToggle from '../ThemeToggle/ThemeToggle';
 
 const HeaderButtons: React.FC = () => {
     const location = useLocation();
@@ -22,6 +23,7 @@ const HeaderButtons: React.FC = () => {
             >
                 Favorite
             </NavLink>
+            <ThemeToggle />
         </div>
     );
 };
