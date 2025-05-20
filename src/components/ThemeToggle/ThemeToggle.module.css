@@ -1,0 +1,19 @@
+.themeToggle {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.themeToggle:hover {
+    transform: scale(1.1);
+}
+
+.themeToggle:focus {
+    outline: none;
+} 

@@ -2,81 +2,128 @@
     max-width: 100%;
     margin: 0;
     padding: 20px 0;
+    position: relative;
+    height: 100%;
+    overflow-x: hidden;
 }
+
+.headerContainer {
+    position: fixed;
+    top: 100px;
+    left: 85px;
+    right: 85px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1;
+}
+
+.topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 85px 0 85px;
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+
 
 .title {
     font-size: 24px;
     font-weight: bold;
-    margin: 0 auto;
-    text-align: left;
-    position: absolute;
-    top: 100px;
-    left: 85px;
+    margin: 0;
+}
+
+.searchContainer {
+    width: 300px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+
+.searchInput {
+    width: 100%;
+    padding: 8px 15px;
+    font-size: 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.searchInput:focus {
+    border-color: #e62429;
 }
 
 .divideLine {
-    width: 100vw;
+    width: 100%;
     height: 2px;
     background-color: #7E7D7D;
-    position: absolute;
-    margin-top: 20px;
+    margin: 0;
+}
+
+.virtuosoContainer {
+    padding-top: 0;
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 .comicsContainer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
     padding: 20px;
     margin: 20px auto;
-    max-width: 1500px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
-.pagination {
+.comicRow {
     display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
     justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-top: 20px;
-    position: absolute;
-    bottom: 160px;
-    left: 50%;
-    transform: translateX(-50%);
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 20px;
 }
 
-.pageDot {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: #ddd;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    outline-width: 1px;
-    outline-style: solid;
-    outline-color: #7E7D7D;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 14px;
+.comicCardWrapper {
+    margin: 10px;
+    width: calc(20% - 20px);
+    max-width: 280px;
+    min-width: 180px;
+    box-sizing: border-box;
+}
+
+.loadingFooter {
+    text-align: center;
+    padding: 20px 0;
     font-weight: bold;
-    color: #333;
+    color: #ed1d24;
 }
 
-.pageDot:hover {
-    background-color: #ed1d24;
-    color: white;
-}
-
-.pageDot.active {
-    background-color: #ed1d24;
-    color: white;
-}
-
-.dots {
-    display: flex;
-    align-items: center;
+.endMessage {
+    text-align: center;
+    padding: 20px 0;
+    font-style: italic;
     color: #7E7D7D;
-    font-weight: bold;
-    padding: 0 5px;
 }
 
+.errorMessage {
+    text-align: center;
+    padding: 40px;
+    color: #ed1d24;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.initialLoading {
+    text-align: center;
+    padding: 40px;
+    font-weight: bold;
+    font-size: 18px;
+    color: #ed1d24;
+}

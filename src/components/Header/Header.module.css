@@ -1,6 +1,6 @@
 .header {
-    background-color: #ed1d24;
-    color: white;
+    background-color: var(--header-bg);
+    color: var(--primary-text);
     height: 80px;
     width: 100%;
     display: flex;
@@ -10,9 +10,9 @@
     top: 0;
     left: 0;
     z-index: 1000;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 5px var(--shadow-color);
     padding: 0 20px;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .logoContainer {
@@ -26,9 +26,9 @@
 }
 
 .title {
-  font-size: 24px;
-  font-weight: bold;
-  margin: 0 auto;
-  text-align: center;
-  flex-grow: 1;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0 auto;
+    text-align: center;
+    flex-grow: 1;
 }

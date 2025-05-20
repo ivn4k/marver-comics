@@ -20,6 +20,8 @@ class ComicsStore {
     private requestCache: Map<string, Promise<any>> = new Map();
     // Add a new cache for series comics data
     private seriesComicsCache: Map<string, IMarvelComic[]> = new Map();
+    // Add a flag to avoid duplicate requests when loading more data
+    private isLoadingMore: boolean = false;
 
     constructor() {
         makeAutoObservable(this);
@@ -58,20 +60,36 @@ class ComicsStore {
         return requestPromise;
     }
 
-    async fetchComics(offset: number = 0, limit: number = 20) {
+    async fetchComics(offset: number = 0, limit: number = 20, searchQuery?: string) {
+        // Return if already loading to prevent duplicate fetches
+        if (this.isLoadingMore) return;
+        
+        // Generate a cache key unique to this pagination request
+        const cacheKey = `comics-${offset}-${limit}-${searchQuery || ''}`;
+        
+        // If this exact offset/limit is already in the cache, return the cached result
+        if (this.requestCache.has(cacheKey)) {
+            return this.requestCache.get(cacheKey);
+        }
+        
         this.loading = true;
         this.error = null;
+        this.isLoadingMore = true;
 
         try {
             const params = await this.getAuthParams();
-            const response = await api.get<IMarvelResponse>('/comics', {
-                params: {
-                    ...params,
-                    offset,
-                    limit,
-                    orderBy: '-focDate'
-                }
-            });
+            const response = await this.cachedRequest(
+                cacheKey,
+                () => api.get<IMarvelResponse>('/comics', {
+                    params: {
+                        ...params,
+                        offset,
+                        limit,
+                        orderBy: '-focDate',
+                        ...(searchQuery && { titleStartsWith: searchQuery })
+                    }
+                })
+            );
 
             runInAction(() => {
                 this.comics = response.data.data.results;
@@ -79,16 +97,24 @@ class ComicsStore {
                 this.offset = response.data.data.offset;
                 this.limit = response.data.data.limit;
                 this.loading = false;
+                this.isLoadingMore = false;
             });
 
-            if (response.data.data.results.length === 0) {
-                toast.info('No comics found');
+            if (response.data.data.results.length === 0 && offset === 0) {
+                toast.info(searchQuery ? 'No comics found matching your search' : 'No comics found');
             }
+            
+            return response;
         } catch (error) {
             this.handleError(error);
+            runInAction(() => {
+                this.isLoadingMore = false;
+            });
+            return null;
         }
     }
 
+    // Остальные методы остаются без изменений...
     async fetchComicById(id: number) {
         if (this.currentComic?.id === id) {
             // If already loaded the same comic, don't reload
@@ -323,5 +349,4 @@ class ComicsStore {
         this.showError = false;
     }
 }
-
 export const comicsStore = new ComicsStore();
