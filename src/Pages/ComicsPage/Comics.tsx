@@ -14,7 +14,6 @@ const Comics: React.FC = observer(() => {
     const { comicsStore, favoritesStore } = useContext(StoreContext);
     const { toggleFavorite } = useFavoriteToggle();
     
-    // Состояние для хранения всех комиксов и управления загрузкой
     const [allComics, setAllComics] = useState<IMarvelComic[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [hasMoreData, setHasMoreData] = useState(true);
@@ -51,7 +50,6 @@ const Comics: React.FC = observer(() => {
         setHasMoreData(allComics.length + comicsStore.comics.length < comicsStore.totalComics);
     }, [allComics.length, comicsStore, hasMoreData, isLoading, debouncedSearchQuery]);
 
-    // Рендер элемента комикса для VirtuosoGrid
     const renderComicItem = useCallback((index: number) => {
         const comic = allComics[index];
         if (!comic) return null;
@@ -72,8 +70,7 @@ const Comics: React.FC = observer(() => {
         );
     }, [favoritesStore, toggleFavorite, allComics]); 
 
-    // Footer компонент для Virtuoso
-    // Отображает сообщение о загрузке или о том, что больше данных нет
+
     const Footer = useCallback(() => {
         return isLoading ? (
             <div className={styles.loadingFooter}>Loading more comics...</div>
