@@ -1,0 +1,16 @@
+In a real-world scenario, you would need to generate proper icons for your PWA.
+For this project, you need to generate the following icon sizes:
+- icon-72x72.png
+- icon-96x96.png
+- icon-128x128.png
+- icon-144x144.png
+- icon-152x152.png
+- icon-192x192.png
+- icon-384x384.png
+- icon-512x512.png
+- maskable_icon.png (with safe area to ensure proper display in all formats)
+
+You can use tools like:
+- https://maskable.app/editor to create maskable icons
+- https://realfavicongenerator.net/ to generate full icon sets
+- https://app-manifest.firebaseapp.com/ to generate manifest and icons 

@@ -1,19 +1,19 @@
 .card {
     width: 250px;
     height: 260px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--card-border);
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px var(--shadow-color);
     transition: transform 0.3s, box-shadow 0.3s;
-    background-color: white;
+    background-color: var(--primary-bg);
     text-align: center;
     position: relative;
 }
 
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 10px var(--shadow-color);
 }
 
 .image {
@@ -26,7 +26,7 @@
     font-size: 16px;
     font-weight: bold;
     margin: 10px 0;
-    color: #333;
+    color: var(--card-title);
     text-decoration: none;
 }
 

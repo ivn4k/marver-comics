@@ -5,8 +5,8 @@ body {
 
 .footer {
     width: 100vw;
-    background-color: #555555;
-    color: white;
+    background-color: var(--footer-bg);
+    color: var(--white);
     height: 150px;
     display: flex;
     align-items: flex-start;
@@ -38,7 +38,7 @@ body {
 .content a {
     margin: 0;
     padding: 0;
-    color: #FFF705;
+    color: var(--footer-link);
     text-decoration: none;
     transition: color 0.3s;
     display: inline;
@@ -47,5 +47,5 @@ body {
 }
 
 .content a:hover {
-    color: red;
+    color: var(--footer-link-hover);
 }

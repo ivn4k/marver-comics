@@ -17,10 +17,10 @@ class ComicsStore {
     offset: number = 0;
     limit: number = 20;
     showError: boolean = false;
-    private requestCache: Map<string, Promise<any>> = new Map();
-    // Add a new cache for series comics data
+    private requestCache: Map<string, Promise<unknown>> = new Map();
+
     private seriesComicsCache: Map<string, IMarvelComic[]> = new Map();
-    // Add a flag to avoid duplicate requests when loading more data
+
     private isLoadingMore: boolean = false;
 
     constructor() {
@@ -45,7 +45,7 @@ class ComicsStore {
     private async cachedRequest<T>(key: string, requestFn: () => Promise<T>): Promise<T> {
         // If there's already a pending request for this key, return that promise
         if (this.requestCache.has(key)) {
-            return this.requestCache.get(key)!;
+            return this.requestCache.get(key) as Promise<T>;
         }
         
         // Create a new promise for this request

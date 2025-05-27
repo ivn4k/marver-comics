@@ -2,7 +2,6 @@ import { useCallback, useContext } from 'react';
 import { StoreContext } from '../store/StoreProvider';
 import { IMarvelComic } from '../types/Comics';
 import { toast } from 'react-toastify';
-import { runInAction } from 'mobx';
 
 export const useFavoriteToggle = () => {
     const { favoritesStore } = useContext(StoreContext);
@@ -14,11 +13,7 @@ export const useFavoriteToggle = () => {
             } else {
                 favoritesStore.addToFavorites(comic);
             }
-            // Принудительно вызываем обновление UI
-            runInAction(() => {
-                favoritesStore.favorites = [...favoritesStore.favorites];
-            });
-        } catch (error) {
+        } catch {
             toast.error('Error updating favorites');
         }
     }, [favoritesStore]);
