@@ -23,6 +23,23 @@
   --button-bg: #f9f9f9;
   --button-text: #213547;
   --shadow-color: rgba(0, 0, 0, 0.2);
+  
+  /* Дополнительные цвета */
+  --marvel-red: #ed1d24;
+  --marvel-red-dark: #e62429;
+  --border-color: #e0e0e0;
+  --divider-color: #7E7D7D;
+  --loading-text: #ed1d24;
+  --error-text: #ed1d24;
+  --end-message: #7E7D7D;
+  --footer-bg: #555555;
+  --footer-link: #FFF705;
+  --footer-link-hover: #ed1d24;
+  --white: #ffffff;
+  --card-border: #ddd;
+  --card-title: #333;
+  --header-button-text: #FFF705;
+  --header-button-hover-bg: #ed1d24;
 }
 
 [data-theme="dark"] {
@@ -36,6 +53,23 @@
   --button-bg: #1a1a1a;
   --button-text: rgba(255, 255, 255, 0.87);
   --shadow-color: rgba(0, 0, 0, 0.4);
+  
+  /* Дополнительные цвета */
+  --marvel-red: #ed1d24;
+  --marvel-red-dark: #e62429;
+  --border-color: #444444;
+  --divider-color: #7E7D7D;
+  --loading-text: #ed1d24;
+  --error-text: #ed1d24;
+  --end-message: #7E7D7D;
+  --footer-bg: #444444;
+  --footer-link: #FFF705;
+  --footer-link-hover: #ed1d24;
+  --white: #ffffff;
+  --card-border: #444;
+  --card-title: #eeeeee;
+  --header-button-text: #FFF705;
+  --header-button-hover-bg: #ed1d24;
 }
 
 a {

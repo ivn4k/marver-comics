@@ -19,7 +19,7 @@
 .divideLine {
     width: 100vw;
     height: 2px;
-    background-color: #7E7D7D;
+    background-color: var(--divider-color);
     position: absolute;
     margin-top: 20px;
 }

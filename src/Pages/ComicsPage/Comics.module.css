@@ -45,20 +45,20 @@
     width: 100%;
     padding: 8px 15px;
     font-size: 16px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--border-color);
     border-radius: 8px;
     outline: none;
     transition: border-color 0.3s ease;
 }
 
 .searchInput:focus {
-    border-color: #e62429;
+    border-color: var(--marvel-red-dark);
 }
 
 .divideLine {
     width: 100%;
     height: 2px;
-    background-color: #7E7D7D;
+    background-color: var(--divider-color);
     margin: 0;
 }
 
@@ -72,6 +72,9 @@
 }
 
 .comicsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     padding: 20px;
     margin: 20px auto;
     width: 100%;
@@ -80,21 +83,14 @@
 }
 
 .comicRow {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: center;
-    margin-bottom: 20px;
-    width: 100%;
+    width: 20%;
+    padding: 10px;
     box-sizing: border-box;
-    padding: 0 20px;
 }
 
 .comicCardWrapper {
-    margin: 10px;
-    width: calc(20% - 20px);
-    max-width: 280px;
-    min-width: 180px;
+    width: 100%;
+    height: 100%;
     box-sizing: border-box;
 }
 
@@ -102,20 +98,20 @@
     text-align: center;
     padding: 20px 0;
     font-weight: bold;
-    color: #ed1d24;
+    color: var(--loading-text);
 }
 
 .endMessage {
     text-align: center;
     padding: 20px 0;
     font-style: italic;
-    color: #7E7D7D;
+    color: var(--end-message);
 }
 
 .errorMessage {
     text-align: center;
     padding: 40px;
-    color: #ed1d24;
+    color: var(--error-text);
     font-weight: bold;
     font-size: 18px;
 }
@@ -125,5 +121,23 @@
     padding: 40px;
     font-weight: bold;
     font-size: 18px;
-    color: #ed1d24;
+    color: var(--loading-text);
+}
+
+@media (max-width: 1200px) {
+    .comicRow {
+        width: 25%;
+    }
+}
+
+@media (max-width: 900px) {
+    .comicRow {
+        width: 33.33%;
+    }
+}
+
+@media (max-width: 600px) {
+    .comicRow {
+        width: 50%;
+    }
 }
