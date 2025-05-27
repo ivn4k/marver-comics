@@ -18,9 +18,9 @@ class ComicsStore {
     limit: number = 20;
     showError: boolean = false;
     private requestCache: Map<string, Promise<any>> = new Map();
-    // Add a new cache for series comics data
+
     private seriesComicsCache: Map<string, IMarvelComic[]> = new Map();
-    // Add a flag to avoid duplicate requests when loading more data
+
     private isLoadingMore: boolean = false;
 
     constructor() {
